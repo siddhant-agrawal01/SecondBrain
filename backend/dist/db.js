@@ -33,18 +33,35 @@ var __importStar = (this && this.__importStar) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ContentModel = exports.userModel = void 0;
+exports.ContentModel = exports.LinkModel = exports.UserModel = void 0;
 const mongoose_1 = __importStar(require("mongoose"));
-mongoose_1.default.connect("mongodb+srv://sidanace:NUSd7e3aMa4K73Pb@cluster0.axooans.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0   ");
+// dotenv.config();
+// mongoose
+//   .connect(process.env.MONGODB_URI || "")
+//   .then(() => console.log("MongoDB connected successfully"))
+//   .catch((err) => console.error("MongoDB connection error:", err));
 const UserSchema = new mongoose_1.Schema({
     username: { type: String, unique: true },
-    password: { type: String },
+    password: String,
+    email: { type: String, unique: true },
+    createdAt: { type: Date, default: Date.now },
 });
+exports.UserModel = (0, mongoose_1.model)("User", UserSchema);
 const ContentSchema = new mongoose_1.Schema({
     title: String,
     link: String,
     tags: [{ type: mongoose_1.default.Types.ObjectId, ref: "Tag" }],
+    type: String,
     userId: { type: mongoose_1.default.Types.ObjectId, ref: "User", required: true },
 });
-exports.userModel = (0, mongoose_1.model)("User", UserSchema);
+const LinkSchema = new mongoose_1.Schema({
+    hash: String,
+    userId: {
+        type: mongoose_1.default.Types.ObjectId,
+        ref: "User",
+        required: true,
+        unique: true,
+    },
+});
+exports.LinkModel = (0, mongoose_1.model)("Links", LinkSchema);
 exports.ContentModel = (0, mongoose_1.model)("Content", ContentSchema);
